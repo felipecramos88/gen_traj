@@ -2,31 +2,34 @@
 
 set B = 0       # begin (time, ps)
 set E = 1000000 # end (time, ps)
-set F = 10000   # number of frames to be extracted for each replica
+set F = 10000   # number of frames to be extracted for each replica from the original .xtc file
 
 @ DT = ($E - $B) / $F
  
 echo "Extracting $F frames between $B and $E ps (dt = $DT)..."
 
-set concentrations = ( 0mM 125mM 250mM 500mM 1000mM )
+# system names
+set systems = ( 0mM 125mM 250mM 500mM 1000mM )
+
+# MD replicas perfomed for each
 set replicas = ( 1 2 3 4 )
 
 # length of 'replicas' list (number of replicas to be processed)
 set R = `echo "${#replicas}"`
 
-foreach CONC ( $concentrations )
+foreach SYS ( $systems )
  
-  if (! -d $CONC) mkdir $CONC
+  if (! -d $SYS) mkdir $SYS
 
-  cd $CONC
+  cd $SYS
   
     foreach REP ( $replicas )
 	    
-      echo CONCENTRATION: $CONC
+      echo SYSTEM: $SYS
       echo REPLICA: $REP
      
-      # this part of the script is specific to my work (delete or change it if you want)
-      if ( $CONC == '0mM' ) then
+      # this part of the script is specific to my project (delete or change it if you want)
+      if ( $SYS == '0mM' ) then
         set NAME = 'BGHI'
       else
         set NAME = 'BGHI+bgl' 	  
@@ -41,21 +44,23 @@ foreach CONC ( $concentrations )
       set TOP  = "prod_R${REP}.tpr"
   
       unlink $PROD
-      ln -s /media/felipecr/Seagate/results_${CONC}/0${REP}/prod.xtc $PROD
+      ln -s /media/felipecr/Seagate/results_${SYS}/0${REP}/prod.xtc $PROD
       
-      cp /media/felipecr/Seagate/results_${CONC}/0${REP}/prod.tpr $TOP
+      cp /media/felipecr/Seagate/results_${SYS}/0${REP}/prod.tpr $TOP
       
+      # gromacs command line:
       echo 0 | gmx_mpi trjconv -f $PROD -s $TOP -b $B -e $E -dt $DT -o $TRJ
  
+      # testing the script:
       # echo "gmx_mpi trjconv -f $PROD -s $TOP -b $B -e $E -dt $DT -o $TRJ"
       # touch $TRJ
 
     end
 
-    # total of frames extrected (here R = 4)
+    # total of frames to be extrected (here, R = 4)
     @ TF = $F * $R
 
-    # create an input file to merge all replicas (in this case 4)
+    # create an input file to merge all replicas (4 replicas in this case)
     cat << EOF > merge_traj.tcsh
     gmx_mpi trjcat -f ${NAME}_${Bns}-${Ens}ns_${F}_R1.xtc \
                       ${NAME}_${Bns}-${Ens}ns_${F}_R2.xtc \
