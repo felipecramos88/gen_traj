@@ -52,7 +52,7 @@ foreach CONC ( $concentrations )
 
     end
 
-    # total of frames extrected (R = 4)
+    # total of frames extrected (here R = 4)
     @ TF = $F * $R
 
     # create an input file to merge all replicas (in this case 4)
