@@ -8,26 +8,31 @@ set F = 10000   # number of frames to be extracted for each replica
  
 echo "Extracting $F frames between $B and $E ps (dt = $DT)..."
 
-set c_list = ( 0mM 125mM 250mM 500mM 1000mM )
-set r_list = ( 1 2 3 4 )
+set concentrations = ( 0mM 125mM 250mM 500mM 1000mM )
+set replicas = ( 1 2 3 4 )
 
-foreach CONC ( $c_list )
+# length of 'replicas' list (number of replicas to be processed)
+set R = `echo "${#replicas}"`
+
+foreach CONC ( $concentrations )
  
   if (! -d $CONC) mkdir $CONC
 
   cd $CONC
   
-    foreach REP ( $r_list )
+    foreach REP ( $replicas )
 	    
       echo CONCENTRATION: $CONC
       echo REPLICA: $REP
      
+      # this part of the script is specific to my work (delete or change it if you want)
       if ( $CONC == '0mM' ) then
         set NAME = 'BGHI'
       else
         set NAME = 'BGHI+bgl' 	  
       endif
-     
+
+      # converts ps to us (for trajectory file name only)
       @ Bns = $B / 1000
       @ Ens = $E / 1000
      
@@ -47,9 +52,10 @@ foreach CONC ( $c_list )
 
     end
 
-    # total of frames extrected:
-    @ TF = $F * 4
+    # total of frames extrected (R = 4)
+    @ TF = $F * $R
 
+    # create an input file to merge all replicas (in this case 4)
     cat << EOF > merge_traj.tcsh
     gmx_mpi trjcat -f ${NAME}_${Bns}-${Ens}ns_${F}_R1.xtc \
                       ${NAME}_${Bns}-${Ens}ns_${F}_R2.xtc \
@@ -58,6 +64,7 @@ foreach CONC ( $c_list )
     		   -o ${NAME}_${Bns}-${Ens}ns_${TF}_R1-4.xtc -cat  
 EOF
 
+  # merge all replicas in a simgle .xtc file (leave the line bellow commented out if you don't need it)
   # tcsh merge_traj.tcsh
 
   cd ../
