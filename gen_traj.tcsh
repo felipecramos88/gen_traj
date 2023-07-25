@@ -49,11 +49,13 @@ foreach SYS ( $systems )
       cp /media/felipecr/Seagate/results_${SYS}/0${REP}/prod.tpr $TOP
       
       # gromacs command line:
-      echo 0 | gmx_mpi trjconv -f $PROD -s $TOP -b $B -e $E -dt $DT -o $TRJ
+      # echo 0 | gmx_mpi trjconv -f $PROD -s $TOP -b $B -e $E -dt $DT -o $TRJ
  
       # testing the script:
-      # echo "gmx_mpi trjconv -f $PROD -s $TOP -b $B -e $E -dt $DT -o $TRJ"
-      # touch $TRJ
+      pwd
+      echo "gmx_mpi trjconv -f $PROD -s $TOP -b $B -e $E -dt $DT -o $TRJ"
+      echo "$TRJ"
+      echo " "
 
     end
 
