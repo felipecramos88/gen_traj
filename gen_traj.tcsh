@@ -4,6 +4,8 @@ set B = 0       # begin (time, ps)
 set E = 1000000 # end (time, ps)
 set F = 10000   # number of frames to be extracted for each replica from the original .xtc file
 
+set storage = '/media/felipecr/Seagate' # (don't put '/' at the end of the path)
+
 @ DT = ($E - $B) / $F
  
 echo "Extracting $F frames between $B and $E ps (dt = $DT)..."
@@ -43,10 +45,13 @@ foreach SYS ( $systems )
       set PROD = "prod_R${REP}.xtc" 
       set TOP  = "prod_R${REP}.tpr"
   
+      # just to be sure you are linkin the correct file
       unlink $PROD
-      ln -s /media/felipecr/Seagate/results_${SYS}/0${REP}/prod.xtc $PROD
+ 
+      # in this case I heve directories named 'results_*', but they could have the same name as the system (chenge it if you want)
+      ln -s $storage/results_${SYS}/0${REP}/prod.xtc $PROD
       
-      cp /media/felipecr/Seagate/results_${SYS}/0${REP}/prod.tpr $TOP
+      cp $storage/results_${SYS}/0${REP}/prod.tpr $TOP
       
       # gromacs command line:
       # echo 0 | gmx_mpi trjconv -f $PROD -s $TOP -b $B -e $E -dt $DT -o $TRJ
