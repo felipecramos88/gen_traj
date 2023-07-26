@@ -54,13 +54,13 @@ foreach SYS ( $systems )
       cp $storage/results_${SYS}/0${REP}/prod.tpr $TOP
       
       # gromacs command line:
-      # echo 0 | gmx_mpi trjconv -f $PROD -s $TOP -b $B -e $E -dt $DT -o $TRJ
+      echo 0 | gmx_mpi trjconv -f $PROD -s $TOP -b $B -e $E -dt $DT -o $TRJ
  
       # testing the script:
-      pwd
-      echo "gmx_mpi trjconv -f $PROD -s $TOP -b $B -e $E -dt $DT -o $TRJ"
-      echo "$TRJ"
-      echo " "
+      # pwd
+      # echo "gmx_mpi trjconv -f $PROD -s $TOP -b $B -e $E -dt $DT -o $TRJ"
+      # echo "$TRJ"
+      # echo " "
 
     end
 
